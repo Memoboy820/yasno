@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Проверка PDF</title>
+</head>
+<body>
+  <h1>Анализ PDF</h1>
+
+  <form id="form">
+    <input
+      id="files"
+      type="file"
+      accept=".pdf"
+      multiple
+      required
+    >
+    <button id="button" type="submit">Отправить</button>
+  </form>
+
+  <p id="status"></p>
+  <pre id="result" style="white-space: pre-wrap;"></pre>
+
+  <script>
+    const form = document.getElementById("form");
+    const input = document.getElementById("files");
+    const button = document.getElementById("button");
+    const status = document.getElementById("status");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData();
+
+      for (const file of input.files) {
+        formData.append("uploaded_files", file);
+      }
+
+      button.disabled = true;
+      status.textContent = "Анализируем, подожди...";
+      result.textContent = "";
+
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:8000/multiple_files_upload",
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+
+        const text = await response.text();
+
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = text;
+        }
+
+        if (!response.ok) {
+          const detail = data?.detail ?? data;
+
+          throw new Error(
+            `HTTP ${response.status}: ${
+              typeof detail === "string"
+                ? detail
+                : JSON.stringify(detail)
+            }`
+          );
+        }
+
+        result.textContent =
+          typeof data === "string"
+            ? data
+            : JSON.stringify(data, null, 2);
+
+        status.textContent = "Готово";
+      } catch (error) {
+        status.textContent = "Ошибка";
+        result.textContent = error.message;
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
