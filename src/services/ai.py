@@ -1,6 +1,6 @@
 from src.constants import models, ai_client, ds_client, AI_FILE_ANALYSIS_ANALYSIS_PROMPT, AI_FILE_ANALYSIS_ANALYSIS_STARTING_PROMPT
 from google.genai import types
-
+from .funcs import pdf_to_text
 import json
 
 async def get_openai_models() -> list[str]:
@@ -69,7 +69,7 @@ async def ai_ds_analyze_pdf(prompt: str, files: list[tuple[str, bytes]]) -> dict
 
     try:
         for filename, file_bytes in files:
-            contents.append(await ai_files_create(filename, file_bytes))
+            contents.append(filename, pdf_to_text(file=file_bytes))
     except Exception as e:
         raise ValueError(f"Не удалось прочитать файл {filename}: {e}") from e
     

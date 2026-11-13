@@ -1,9 +1,8 @@
 from src.constants import ds_client
+from io import BytesIO
+from pypdf import PdfReader
 
-async def ai_files_create(filename, file_bytes) -> dict:
-    uploaded = await ds_client.files.create(
-        file=(filename, file_bytes),
-        purpose="user_data",
-    )
-
-    return {"type": "input_file", "file_id": uploaded.id,}   
+def pdf_to_text(file: bytes)-> str:
+    reader = PdfReader(BytesIO(file))
+    text = "\n".join(page.extract_text() or "" for page in reader.pages)
+    return text
