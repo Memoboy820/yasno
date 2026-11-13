@@ -84,7 +84,7 @@ async def ai_ds_analyze_pdf(prompt: str, files: list[tuple[str, bytes]]) -> dict
     #for model in ds_models:
     try:
         response = await ds_client.responses.create(
-            model="gpt-5-nano",
+            model="gemma-4-26b-a4b-it",
             input=[{"role": "user", "content": contents}],
             text={"format": {"type": "json_object"}}
             )       
