@@ -69,7 +69,7 @@ async def ai_ds_analyze_pdf(prompt: str, files: list[tuple[str, bytes]]) -> dict
 
     try:
         for filename, file_bytes in files:
-            contents.append(filename, pdf_to_text(file=file_bytes))
+            contents.append((filename, pdf_to_text(file=file_bytes)))
     except Exception as e:
         raise ValueError(f"Не удалось прочитать файл {filename}: {e}") from e
     
