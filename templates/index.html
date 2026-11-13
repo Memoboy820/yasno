@@ -1,89 +1,312 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Проверка PDF</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ясно — загрузка файлов</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f3f5fa;
+            color: #222d43;
+            font-family: Arial, sans-serif;
+        }
+
+        main {
+            max-width: 760px;
+            margin: 48px auto;
+            padding: 0 20px;
+        }
+
+        header {
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            color: #5263d6;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        h1 {
+            margin: 28px 0 10px;
+            font-size: 32px;
+        }
+
+        p {
+            color: #68748a;
+            line-height: 1.6;
+        }
+
+        .card {
+            background: white;
+            padding: 28px;
+            border: 1px solid #e1e5ef;
+            border-radius: 16px;
+            margin-bottom: 22px;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin: 0 0 20px;
+        }
+
+        label {
+            display: block;
+            padding: 24px;
+            background: #f8f9ff;
+            border: 1px dashed #b9c2e8;
+            border-radius: 10px;
+        }
+
+        label strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        label span {
+            display: block;
+            color: #68748a;
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+
+        input {
+            max-width: 100%;
+            font: inherit;
+            font-size: 14px;
+        }
+
+        input::file-selector-button {
+            background: white;
+            border: 1px solid #d4daec;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-right: 10px;
+            cursor: pointer;
+            color: #36446b;
+        }
+
+        ul {
+            padding-left: 20px;
+            font-size: 14px;
+            color: #68748a;
+            overflow-wrap: anywhere;
+            line-height: 1.7;
+        }
+
+        button {
+            background: #5263d6;
+            color: white;
+            border: 0;
+            border-radius: 8px;
+            padding: 13px 22px;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #4050c0;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        :focus-visible {
+            outline: 3px solid #a7b4ff;
+            outline-offset: 3px;
+        }
+
+        #status {
+            margin: 16px 0 0;
+            font-size: 14px;
+        }
+
+        #result {
+            margin: 0;
+            padding: 18px;
+            min-height: 150px;
+            max-height: 550px;
+            overflow: auto;
+            background: #f5f7fb;
+            border: 1px solid #e5e9f1;
+            border-radius: 8px;
+            white-space: pre;
+            overflow-wrap: normal;
+            word-break: normal;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #28364e;
+        }
+
+        .hint {
+            margin: -8px 0 16px;
+            font-size: 13px;
+        }
+
+        footer {
+            text-align: center;
+            color: #8590a4;
+            font-size: 12px;
+            margin: 28px 0;
+        }
+
+        @media (max-width: 520px) {
+            main {
+                margin: 28px auto;
+                padding: 0 14px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            label {
+                padding: 18px;
+            }
+
+            h1 {
+                font-size: 27px;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <h1>Анализ PDF</h1>
+    <main>
+        <header>
+            <div class="logo">ясно.</div>
+            <h1>Загрузка документов</h1>
+            <p>
+                Выберите PDF-файлы и отправьте их на обработку.
+                Ответ сервера появится ниже.
+            </p>
+        </header>
 
-  <form id="form">
-    <input
-      id="files"
-      type="file"
-      accept=".pdf"
-      multiple
-      required
-    >
-    <button id="button" type="submit">Отправить</button>
-  </form>
+        <section class="card">
+            <h2>1. Выберите файлы</h2>
 
-  <p id="status"></p>
-  <pre id="result" style="white-space: pre-wrap;"></pre>
+            <form id="form">
+                <label for="files">
+                    <strong>Ваши документы</strong>
+                    <span>Можно выбрать один или несколько PDF-файлов.</span>
 
-  <script>
-    const form = document.getElementById("form");
-    const input = document.getElementById("files");
-    const button = document.getElementById("button");
-    const status = document.getElementById("status");
-    const result = document.getElementById("result");
+                    <input
+                        type="file"
+                        id="files"
+                        accept=".pdf,application/pdf"
+                        multiple
+                        required
+                    >
+                </label>
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
+                <ul id="list" hidden></ul>
 
-      const formData = new FormData();
+                <p class="hint" style="margin: 16px 0;">
+                    Файлы будут отправлены на сервер для обработки.
+                </p>
 
-      for (const file of input.files) {
-        formData.append("uploaded_files", file);
-      }
+                <button id="button" type="submit">
+                    Загрузить файлы
+                </button>
+            </form>
 
-      button.disabled = true;
-      status.textContent = "Анализируем, подожди...";
-      result.textContent = "";
+            <p id="status" role="status">Готово к загрузке</p>
+        </section>
 
-      try {
-        const response = await fetch(
-          "http://127.0.0.1:8000/multiple_files_upload",
-          {
-            method: "POST",
-            body: formData
-          }
-        );
+        <section class="card">
+            <h2>2. Ответ сервера</h2>
+            <p class="hint">Тело HTTP-ответа без изменений.</p>
+            <pre id="result"></pre>
+        </section>
 
-        const text = await response.text();
+        <footer>Загрузка и обработка PDF-документов</footer>
+    </main>
 
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch {
-          data = text;
-        }
+    <script>
+        const API_URL =
+            'https://yasno-production-1945b59d.up.railway.app/multiple_files_upload';
 
-        if (!response.ok) {
-          const detail = data?.detail ?? data;
+        const form = document.getElementById('form');
+        const files = document.getElementById('files');
+        const button = document.getElementById('button');
+        const status = document.getElementById('status');
+        const result = document.getElementById('result');
+        const list = document.getElementById('list');
 
-          throw new Error(
-            `HTTP ${response.status}: ${
-              typeof detail === "string"
-                ? detail
-                : JSON.stringify(detail)
-            }`
-          );
-        }
+        files.addEventListener('change', () => {
+            list.textContent = '';
+            list.hidden = files.files.length === 0;
 
-        result.textContent =
-          typeof data === "string"
-            ? data
-            : JSON.stringify(data, null, 2);
+            for (const file of files.files) {
+                const item = document.createElement('li');
+                item.textContent = file.name;
+                list.appendChild(item);
+            }
+        });
 
-        status.textContent = "Готово";
-      } catch (error) {
-        status.textContent = "Ошибка";
-        result.textContent = error.message;
-      } finally {
-        button.disabled = false;
-      }
-    });
-  </script>
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            if (!files.files.length) {
+                status.textContent = 'Выберите хотя бы один файл.';
+                return;
+            }
+
+            const data = new FormData();
+
+            for (const file of files.files) {
+                data.append('uploaded_files', file);
+            }
+
+            button.disabled = true;
+            files.disabled = true;
+            button.textContent = 'Загрузка...';
+
+            status.textContent =
+                'Отправляем файлы. Дождитесь ответа сервера.';
+
+            result.textContent = '';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: data
+                });
+
+                const rawResponse = await response.text();
+
+                result.textContent = rawResponse;
+
+                status.textContent =
+                    (response.ok
+                        ? 'Готово.'
+                        : 'Сервер вернул ошибку.') +
+                    ' HTTP ' + response.status +
+                    (rawResponse.length === 0
+                        ? '. Тело ответа пустое.'
+                        : '');
+            } catch (error) {
+                status.textContent =
+                    'Ошибка запроса: ' + error.message;
+            } finally {
+                button.disabled = false;
+                files.disabled = false;
+                button.textContent = 'Загрузить файлы';
+            }
+        });
+    </script>
 </body>
 </html>

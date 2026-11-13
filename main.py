@@ -18,3 +18,4 @@ app.add_middleware(
 #  fastapi dev ЯСНО\scr\main.py
 
 app.include_router(main_router)
+

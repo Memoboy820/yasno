@@ -1,12 +1,14 @@
 from dotenv import load_dotenv
 from google import genai
 import os
+from openai import OpenAI, AsyncOpenAI
 
 load_dotenv()
 
 
 
 AI_KEY = os.getenv("AI_KEY")
+AI_DS_KEY = os.getenv("AI_DEEPSEEK_KEY")
 
 models = (
     "gemini-3.5-flash-lite",
@@ -56,4 +58,11 @@ AI_FILE_ANALYSIS_ANALYSIS_STARTING_PROMPT = """
         Если документы противоречат друг другу, сообщи об этом.
     """
 
+
+
+
+ds_client = AsyncOpenAI(
+    api_key=AI_DS_KEY,
+    base_url="https://api.deepseek.com"
+)
 
