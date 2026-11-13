@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, HTTPException
-from src.services.ai import ai_analyze_pdf
+from src.services.ai import ai_analyze_pdf, ai_ds_analyze_pdf
 from src.constants import AI_FILE_ANALYSIS_ANALYSIS_PROMPT
 import asyncio
 
@@ -24,7 +24,7 @@ async def upload_files(uploaded_files: list[UploadFile]):
         finally:
             await uploaded_file.close()
 
-    result = await ai_analyze_pdf(prompt=AI_FILE_ANALYSIS_ANALYSIS_PROMPT, files=files)
+    result = await ai_ds_analyze_pdf(prompt=AI_FILE_ANALYSIS_ANALYSIS_PROMPT, files=files)
     
     if result is None:
         raise HTTPException(

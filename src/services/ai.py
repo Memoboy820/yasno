@@ -55,7 +55,7 @@ async def ai_analyze_pdf(prompt: str, files: list[tuple[str, bytes]]) -> dict | 
 
 
 
-async def ai_ds_analyse_pdf(prompt: str, files: list[tuple[str, bytes]]) -> dict | list | None:
+async def ai_ds_analyze_pdf(prompt: str, files: list[tuple[str, bytes]]) -> dict | list | None:
     if not files:
         raise ValueError("Не переданы файлы")
 
