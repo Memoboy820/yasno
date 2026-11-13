@@ -8,7 +8,7 @@ load_dotenv()
 
 
 AI_KEY = os.getenv("AI_KEY")
-AI_DS_KEY = os.getenv("AI_DEEPSEEK_KEY")
+AI_DS_KEY = os.getenv("AITUNNEL_API_KEY")
 
 models = (
     "gemini-3.5-flash-lite",
@@ -63,6 +63,6 @@ AI_FILE_ANALYSIS_ANALYSIS_STARTING_PROMPT = """
 
 ds_client = AsyncOpenAI(
     api_key=AI_DS_KEY,
-    base_url="https://api.deepseek.com"
+    base_url="https://api.aitunnel.ru/v1/"
 )
 
