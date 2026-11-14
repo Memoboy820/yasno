@@ -37,38 +37,57 @@
             required
         >
         <br>
-        <button id="button" type="submit">Отправить</button>
+        <button type="submit" value="free">
+            Отправить бесплатно
+        </button>
+        <button type="submit" value="paid">
+            Отправить платно
+        </button>
     </form>
 
-    <pre id="output" role="status">Выбери PDF и нажми «Отправить».</pre>
+    <pre id="output" role="status">Выбери PDF и вариант отправки.</pre>
 
     <script>
         const form = document.getElementById("form");
         const filesInput = document.getElementById("files");
-        const button = document.getElementById("button");
+        const buttons = form.querySelectorAll('button[type="submit"]');
         const output = document.getElementById("output");
+
+        const baseUrl = "https://yasno-production-1945b59d.up.railway.app";
+
+        const endpoints = {
+            free: "/free_multiple_files_upload",
+            paid: "/paid_multiple_files_upload"
+        };
 
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
 
+            const mode = event.submitter?.value || "free";
             const data = new FormData();
 
             for (const file of filesInput.files) {
                 data.append("uploaded_files", file);
             }
 
-            button.disabled = true;
-            output.textContent = "Отправляем файлы. Ожидаем ответ ИИ...\n";
+            buttons.forEach((button) => {
+                button.disabled = true;
+            });
+
+            const modeLabel = mode === "paid" ? "Платный" : "Бесплатный";
+            output.textContent =
+                `${modeLabel} режим. Отправляем файлы. Ожидаем ответ ИИ...\n`;
 
             const started = Date.now();
             const timer = setInterval(() => {
                 output.textContent =
-                    `Ожидаем ответ… ${Math.floor((Date.now() - started) / 1000)} сек.`;
+                    `${modeLabel} режим. Ожидаем ответ… ` +
+                    `${Math.floor((Date.now() - started) / 1000)} сек.`;
             }, 1000);
 
             try {
                 const response = await fetch(
-                    "https://yasno-production-1945b59d.up.railway.app/multiple_files_upload",
+                    baseUrl + endpoints[mode],
                     {
                         method: "POST",
                         body: data
@@ -76,7 +95,8 @@
                 );
 
                 clearInterval(timer);
-                output.textContent = `HTTP ${response.status}\nЧитаем ответ…`;
+                output.textContent =
+                    `HTTP ${response.status}\nЧитаем ответ…`;
 
                 const text = await response.text();
 
@@ -87,7 +107,10 @@
                 output.textContent = `Ошибка запроса:\n${error.message}`;
             } finally {
                 clearInterval(timer);
-                button.disabled = false;
+
+                buttons.forEach((button) => {
+                    button.disabled = false;
+                });
             }
         });
     </script>
