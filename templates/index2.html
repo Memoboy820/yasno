@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Анализ PDF</title>
+    <title>Анализ файлов</title>
+
     <style>
         body {
             max-width: 800px;
@@ -15,6 +16,25 @@
         button {
             margin-top: 16px;
             padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            cursor: default;
+        }
+
+        #files-list {
+            padding-left: 24px;
+            overflow-wrap: anywhere;
+        }
+
+        #files-list li {
+            margin-bottom: 8px;
+        }
+
+        #files-list button {
+            margin: 0 0 0 12px;
+            padding: 4px 8px;
         }
 
         pre {
@@ -26,59 +46,153 @@
     </style>
 </head>
 <body>
-    <h1>Анализ PDF</h1>
+    <h1>Анализ файлов</h1>
 
     <form id="form">
+        <label for="files">Добавить файлы:</label>
         <input
             id="files"
             type="file"
-            accept=".pdf,application/pdf"
             multiple
-            required
         >
+
+        <p id="files-info" role="status">Файлы не выбраны.</p>
+        <ul id="files-list"></ul>
+
+        <button id="clear-files" type="button">
+            Удалить все файлы
+        </button>
+
         <br>
+
         <button type="submit" value="free">
             Отправить бесплатно
         </button>
+
         <button type="submit" value="paid">
             Отправить платно
         </button>
     </form>
 
-    <pre id="output" role="status">Выбери PDF и вариант отправки.</pre>
+    <pre id="output" role="status">Добавь файлы и выбери вариант отправки.</pre>
 
     <script>
         const form = document.getElementById("form");
         const filesInput = document.getElementById("files");
-        const buttons = form.querySelectorAll('button[type="submit"]');
+        const filesInfo = document.getElementById("files-info");
+        const filesList = document.getElementById("files-list");
+        const clearButton = document.getElementById("clear-files");
+        const submitButtons =
+            form.querySelectorAll('button[type="submit"]');
         const output = document.getElementById("output");
 
-        const baseUrl = "https://yasno-production-1945b59d.up.railway.app";
+        const baseUrl =
+            "https://yasno-production-1945b59d.up.railway.app";
 
         const endpoints = {
             free: "/free_multiple_files_upload",
             paid: "/paid_multiple_files_upload"
         };
 
+        let selectedFiles = [];
+        let sending = false;
+
+        function renderFiles() {
+            filesInfo.textContent = selectedFiles.length
+                ? `Прикреплено файлов: ${selectedFiles.length}`
+                : "Файлы не выбраны.";
+
+            filesList.replaceChildren();
+
+            selectedFiles.forEach((file, index) => {
+                const item = document.createElement("li");
+
+                const name = document.createElement("span");
+                name.textContent = file.name;
+
+                const removeButton = document.createElement("button");
+                removeButton.type = "button";
+                removeButton.textContent = "Удалить";
+                removeButton.disabled = sending;
+
+                removeButton.addEventListener("click", () => {
+                    if (sending) return;
+
+                    selectedFiles.splice(index, 1);
+                    renderFiles();
+                });
+
+                item.append(name, removeButton);
+                filesList.appendChild(item);
+            });
+
+            clearButton.disabled = sending || !selectedFiles.length;
+        }
+
+        function setSending(value) {
+            sending = value;
+            filesInput.disabled = value;
+
+            submitButtons.forEach((button) => {
+                button.disabled = value;
+            });
+
+            renderFiles();
+        }
+
+        filesInput.addEventListener("change", () => {
+            for (const file of filesInput.files) {
+                const alreadyAdded = selectedFiles.some((existing) =>
+                    existing.name === file.name &&
+                    existing.size === file.size &&
+                    existing.lastModified === file.lastModified
+                );
+
+                if (!alreadyAdded) {
+                    selectedFiles.push(file);
+                }
+            }
+
+            filesInput.value = "";
+            renderFiles();
+        });
+
+        clearButton.addEventListener("click", () => {
+            if (sending) return;
+
+            selectedFiles = [];
+            filesInput.value = "";
+            renderFiles();
+        });
+
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
 
+            if (sending) return;
+
+            if (!selectedFiles.length) {
+                output.textContent = "Сначала добавь хотя бы один файл.";
+                return;
+            }
+
             const mode = event.submitter?.value || "free";
+            const modeLabel =
+                mode === "paid" ? "Платный" : "Бесплатный";
+
             const data = new FormData();
 
-            for (const file of filesInput.files) {
+            for (const file of selectedFiles) {
                 data.append("uploaded_files", file);
             }
 
-            buttons.forEach((button) => {
-                button.disabled = true;
-            });
+            setSending(true);
 
-            const modeLabel = mode === "paid" ? "Платный" : "Бесплатный";
             output.textContent =
-                `${modeLabel} режим. Отправляем файлы. Ожидаем ответ ИИ...\n`;
+                `${modeLabel} режим. Отправляем файлов: ` +
+                `${selectedFiles.length}. Ожидаем ответ ИИ...`;
 
             const started = Date.now();
+
             const timer = setInterval(() => {
                 output.textContent =
                     `${modeLabel} режим. Ожидаем ответ… ` +
@@ -94,25 +208,24 @@
                     }
                 );
 
-                clearInterval(timer);
-                output.textContent =
-                    `HTTP ${response.status}\nЧитаем ответ…`;
-
                 const text = await response.text();
+
+                clearInterval(timer);
 
                 output.textContent =
                     `HTTP ${response.status}\n\n` +
                     (text || "[Пустой ответ сервера]");
             } catch (error) {
-                output.textContent = `Ошибка запроса:\n${error.message}`;
+                clearInterval(timer);
+                output.textContent =
+                    `Ошибка запроса:\n${error.message}`;
             } finally {
                 clearInterval(timer);
-
-                buttons.forEach((button) => {
-                    button.disabled = false;
-                });
+                setSending(false);
             }
         });
+
+        renderFiles();
     </script>
 </body>
 </html>
