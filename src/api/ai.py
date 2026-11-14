@@ -5,7 +5,7 @@ import asyncio
 
 router = APIRouter()
 
-@router.post("/free_multiple_files_upload", description="Бесплатный анализ файлов из доступных форматов", tags="AI")
+@router.post("/free_multiple_files_upload", description="Бесплатный анализ файлов из доступных форматов", tags=["AI"])
 async def upload_files(uploaded_files: list[UploadFile]):
     files = []
 
@@ -32,7 +32,7 @@ async def upload_files(uploaded_files: list[UploadFile]):
 
 
 
-@router.post("/paid_multiple_files_upload", description="Платный анализ файлов из доступных форматов", tags="AI")
+@router.post("/paid_multiple_files_upload", description="Платный анализ файлов из доступных форматов", tags=["AI"])
 async def upload_files(uploaded_files: list[UploadFile]):
     files = []
     print("[API] Пришёл платный запрос", flush=True)
