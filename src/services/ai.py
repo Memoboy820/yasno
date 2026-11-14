@@ -1,7 +1,11 @@
-from src.constants import models, ai_client, ds_client, AI_FILE_ANALYSIS_ANALYSIS_PROMPT, AI_FILE_ANALYSIS_ANALYSIS_STARTING_PROMPT
+from src.constants import models, ai_client, ds_client, AI_FILE_ANALYSIS_ANALYSIS_PROMPT as AI_FILE_ANALYSIS_ANALYSIS_STARTING_PROMPT
 from google.genai import types
-from .funcs import pdf_to_text, make_document_content
+from .funcs import bytes_to_text, make_document_content, get_mime_type
 import json
+from asyncio import to_thread
+
+
+# ------------------------------------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 
 async def get_openai_models() -> list[str]:
     try:
@@ -10,6 +14,8 @@ async def get_openai_models() -> list[str]:
         return ds_models
     except Exception as e:
         raise Exception(f"Не удалось получить доступные модели openai: {e}")
+
+
 
 async def ai_files_create(filename: str, file_bytes: bytes) -> dict:
     uploaded = await ds_client.files.create(
@@ -21,21 +27,7 @@ async def ai_files_create(filename: str, file_bytes: bytes) -> dict:
 
 
 
-async def ai_analyze_pdf(prompt: str, files: list[tuple[str, bytes]]) -> dict | list | None:
-    if not files:
-        raise ValueError("Не переданы файлы")
-    
-    contents= [AI_FILE_ANALYSIS_ANALYSIS_STARTING_PROMPT]
-
-    for filename, filebytes in files:
-        contents.append(f"Следующий документ: {filename}")
-
-        contents.append(
-            types.Part.from_bytes(
-                data=filebytes,
-                mime_type="application/pdf"
-            )
-        )
+async def get_gemini_response(ai: str, prompt: str, contents: list[str | types.Part]):
     for model in models:
         try:
             response = await ai_client.aio.models.generate_content(
@@ -47,41 +39,16 @@ async def ai_analyze_pdf(prompt: str, files: list[tuple[str, bytes]]) -> dict | 
                 ai_text_list = json.loads(response.text)
 
                 if not isinstance(ai_text_list, (dict, list)):
-                    raise ValueError("[ai_analyze_pdf] Ожидался JSON объект или список")
+                    raise ValueError(f"[{ai}] Ожидался JSON объект или список")
             
                 return ai_text_list
         except Exception as e:
-            print(f"[ai_analyze_pdf] {model} не дала пригодный ответ: {e}")
+            print(f"[{ai}] {model} не дала пригодный ответ: {e}")
     return None
 
 
 
-
-
-async def ai_ds_analyze_pdf(prompt: str, files: list[tuple[str, bytes]]) -> dict | list | None:
-    if not files:
-        raise ValueError("Не переданы файлы")
-
-    contents = [{
-        "type": "input_text",
-        "text": AI_FILE_ANALYSIS_ANALYSIS_STARTING_PROMPT + f"\n{prompt}" + "\nВерни результат в виде JSON",
-    }]
-
-    try:
-        for filename, file_bytes in files:
-            text = pdf_to_text(file=file_bytes)
-            contents.append(make_document_content(filename, text))
-    except Exception as e:
-        raise ValueError(f"Не удалось прочитать файл {filename}: {e}") from e
-    
-
-    #try:   
-    #    ds_models = await get_openai_models()
-    #except Exception as e:
-    #    raise ValueError(f"Не удалось получить доступные модели ИИ: {e}") from e
-
-
-    #for model in ds_models:
+async def get_openai_response(ai: str, contents: list[dict]):
     try:
         response = await ds_client.responses.create(
             model="gemma-4-26b-a4b-it",
@@ -93,12 +60,69 @@ async def ai_ds_analyze_pdf(prompt: str, files: list[tuple[str, bytes]]) -> dict
             ai_text_list = json.loads(response.output_text)
 
             if not isinstance(ai_text_list, (dict, list)):
-                raise ValueError("[ai_analyze_pdf] Ожидался JSON объект или список")
+                raise ValueError(f"[{ai}] Ожидался JSON объект или список")
         
             return ai_text_list
 
 
     except Exception as e:
-        print(f"[DS] не дала пригодный ответ: {e}")
+        print(f"[{ai}] не дала пригодный ответ: {e}")
     return None
 
+
+
+# ------------------------------------------- ГЛАВНЫЕ ФУНКЦИИ
+
+
+async def ai_free_analyze_pdf(prompt: str, files: list[tuple[str, bytes]]) -> dict | list | None:
+    if not files:
+        raise ValueError("Не переданы файлы")
+    
+    contents= [AI_FILE_ANALYSIS_ANALYSIS_STARTING_PROMPT]
+
+    for filename, filebytes in files:
+        try:
+            part = types.Part.from_bytes(
+                data=filebytes,
+                mime_type=get_mime_type(filename=filename))
+
+            contents.extend([
+            f"Следующий документ: {filename}",
+            part
+        ])
+            
+        except Exception as e:
+            print(f"[GEMINI] Не удалось обработать файл: {e}")
+
+
+    if len(contents) > 1: # наличие файлов вообще
+        ai_text_list = await get_gemini_response(ai="GEMINI", prompt=prompt, contents=contents)
+        return ai_text_list
+    return None
+
+
+
+
+
+async def ai_paid_analyze_pdf(prompt: str, files: list[tuple[str, bytes]]) -> dict | list | None:
+    if not files:
+        raise ValueError("Не переданы файлы")
+
+    contents = [{
+        "type": "input_text",
+        "text": AI_FILE_ANALYSIS_ANALYSIS_STARTING_PROMPT + f"\n{prompt}" + "\nВерни результат в виде JSON",
+    }]
+
+    try:
+        for filename, file_bytes in files:
+            text = await to_thread(bytes_to_text, filename=filename, file=file_bytes)
+            contents.append(make_document_content(filename, text))
+    except Exception as e:
+        raise ValueError(f"[OPENAI] Не удалось прочитать файл {filename}: {e}") from e
+    
+    
+    ai_text_list = await get_openai_response(ai="OPENAI", contents=contents)
+
+    if ai_text_list is not None:
+        return ai_text_list
+    return None

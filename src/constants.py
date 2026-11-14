@@ -66,3 +66,10 @@ ds_client = AsyncOpenAI(
     base_url="https://api.aitunnel.ru/v1/"
 )
 
+
+mime_types = {
+    ".pdf": "application/pdf",
+    ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ".doc": "application/msword",
+    ".txt": "text/plain",
+}

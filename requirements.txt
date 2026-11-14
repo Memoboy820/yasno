@@ -2,4 +2,4 @@ fastapi[standard]
 google-genai
 openai
 pypdf
-
+markitdown[all]
