@@ -1,7 +1,8 @@
 from dotenv import load_dotenv
 from google import genai
+from google.genai import types as google_types
 import os
-from openai import OpenAI, AsyncOpenAI
+from openai import OpenAI, AsyncOpenAI, types as openai_types
 
 load_dotenv()
 
@@ -23,7 +24,8 @@ models = (
 
 
 ai_client = genai.Client(
-    api_key=AI_KEY
+    api_key=AI_KEY,
+    http_options=google_types.HttpOptions(timeout=120_000)
 )
 
 
@@ -97,7 +99,8 @@ AI_FILE_ANALYSIS_ANALYSIS_STARTING_PROMPT = """
 
 ds_client = AsyncOpenAI(
     api_key=AI_DS_KEY,
-    base_url="https://api.aitunnel.ru/v1/"
+    base_url="https://api.aitunnel.ru/v1/",
+    timeout=120.0
 )
 
 

@@ -3,6 +3,7 @@ from google.genai import types
 from .funcs import bytes_to_text, make_document_content, get_mime_type
 import json
 from asyncio import to_thread
+from .decorators import RetryDecorator
 
 
 # ------------------------------------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
@@ -48,6 +49,7 @@ async def get_gemini_response(ai: str, prompt: str, contents: list[str | types.P
 
 
 
+@RetryDecorator(retries=3)
 async def get_openai_response(ai: str, contents: list[dict]):
     try:
         response = await ds_client.responses.create(
