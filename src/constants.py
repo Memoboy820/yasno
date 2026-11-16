@@ -24,8 +24,7 @@ models = (
 
 
 ai_client = genai.Client(
-    api_key=AI_KEY,
-    http_options=google_types.HttpOptions(timeout=120_000)
+    api_key=AI_KEY
 )
 
 
@@ -99,8 +98,7 @@ AI_FILE_ANALYSIS_ANALYSIS_STARTING_PROMPT = """
 
 ds_client = AsyncOpenAI(
     api_key=AI_DS_KEY,
-    base_url="https://api.aitunnel.ru/v1/",
-    timeout=120.0
+    base_url="https://api.aitunnel.ru/v1/"
 )
 
 
