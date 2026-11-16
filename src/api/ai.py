@@ -8,6 +8,8 @@ router = APIRouter()
 @router.post("/free_multiple_files_upload", description="Бесплатный анализ файлов из доступных форматов", tags=["AI"])
 async def upload_files(uploaded_files: list[UploadFile]):
     files = []
+    print("[API] Пришёл бесплатный запрос", flush=True)
+    print("[READ] Начинаем извлечение текста", flush=True)
 
     for uploaded_file in uploaded_files:
         try:
@@ -18,12 +20,13 @@ async def upload_files(uploaded_files: list[UploadFile]):
         finally:
             await uploaded_file.close()
 
+    print("[AI] Текст готов, отправляем запрос провайдеру", flush=True)
     result = await ai_free_analyze_pdf(prompt=AI_FILE_ANALYSIS_ANALYSIS_PROMPT, files=files)
     
     if result is None:
         raise HTTPException(
             status_code=502,
-            detail="[API upload_files]Не удалось получить ответ от ИИ"
+            detail="[API upload_files] Не удалось получить ответ от ИИ"
         )
     
     return result
@@ -53,7 +56,7 @@ async def upload_files(uploaded_files: list[UploadFile]):
     if result is None:
         raise HTTPException(
             status_code=502,
-            detail="[API upload_files]Не удалось получить ответ от ИИ"
+            detail="[API upload_files] Не удалось получить ответ от ИИ"
         )
     
     return result
