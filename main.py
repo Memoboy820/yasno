@@ -9,7 +9,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware, 
-    allow_origins=["*"], # "*" - все можно
+    allow_origins=["https://yasno.up.railway.app"], # "*" - все можно
     allow_methods=["*"],
     allow_credentials=False, # учетные данные
     allow_headers=["*"]
