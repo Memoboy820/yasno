@@ -5,646 +5,176 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#27203f">
     <title>Ясно! — Из положения в план действий</title>
-
     <style>
         :root {
             color-scheme: dark;
-            --bg: #151121;
-            --surface: #211a33;
-            --surface-light: #2b2242;
-            --cream: #e7dfc9;
-            --text: #f5f0e4;
-            --muted: #aaa1bc;
-            --line: #ffffff14;
-            --accent: #c4b0f1;
-            --danger: #ffb4b4;
+            --bg: #151121; --surface: #211a33; --surface-light: #2b2242;
+            --cream: #e7dfc9; --text: #f5f0e4; --muted: #aaa1bc;
+            --line: #ffffff14; --accent: #c4b0f1; --danger: #ffb4b4;
         }
-
-        * {
-            box-sizing: border-box;
-        }
-
+        * { box-sizing: border-box; }
         body {
-            margin: 0;
-            min-height: 100vh;
-            background:
-                radial-gradient(
-                    ellipse at 80% 0%,
-                    #59407830,
-                    transparent 55%
-                ),
-                var(--bg);
-            color: var(--text);
-            font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-            line-height: 1.6;
+            margin: 0; min-height: 100vh;
+            background: radial-gradient(ellipse at 80% 0%, #59407830, transparent 55%), var(--bg);
+            color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; line-height: 1.6;
         }
-
-        button, input {
-            font: inherit;
+        button, input { font: inherit; }
+        button, label { -webkit-tap-highlight-color: transparent; }
+        button { cursor: pointer; }
+        button:disabled { cursor: default; opacity: .5; }
+        button:focus-visible, a:focus-visible, summary:focus-visible, .dropzone:focus-within {
+            outline: 2px solid var(--accent); outline-offset: 5px;
         }
-
-        button, label {
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        button {
-            cursor: pointer;
-        }
-
-        button:disabled {
-            cursor: default;
-            opacity: .5;
-        }
-
-        button:focus-visible,
-        a:focus-visible,
-        summary:focus-visible,
-        .dropzone:focus-within {
-            outline: 2px solid var(--accent);
-            outline-offset: 5px;
-        }
-
-        .container {
-            width: min(1080px, calc(100% - 40px));
-            margin: 0 auto;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-            padding: 28px 0;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
+        .container { width: min(1080px, calc(100% - 40px)); margin: 0 auto; }
+        header { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 28px 0; }
+        .brand { display: flex; align-items: center; gap: 12px; }
         .brand-mark {
-            display: grid;
-            place-items: center;
-            width: 48px;
-            height: 48px;
-            background: var(--cream);
-            border-radius: 15px;
-            color: #27203f;
-            font-size: 26px;
-            font-weight: 900;
-            font-style: italic;
-            letter-spacing: -3px;
-            padding-right: 4px;
+            display: grid; place-items: center; width: 48px; height: 48px;
+            background: var(--cream); border-radius: 15px; color: #27203f;
+            font-size: 26px; font-weight: 900; font-style: italic; letter-spacing: -3px; padding-right: 4px;
         }
-
-        .brand-name {
-            color: var(--cream);
-            font-size: 25px;
-            font-weight: 850;
-            font-style: italic;
-            letter-spacing: -1px;
-        }
-
-        .header-note {
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .hero {
-            padding: 56px 0 35px;
-            max-width: 800px;
-        }
-
+        .brand-name { color: var(--cream); font-size: 25px; font-weight: 850; font-style: italic; letter-spacing: -1px; }
+        .header-note { color: var(--muted); font-size: 13px; }
+        .hero { padding: 56px 0 35px; max-width: 800px; }
         .eyebrow {
-            margin: 0 0 18px;
-            color: var(--accent);
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            margin: 0 0 18px; color: var(--accent); font-size: 12px;
+            font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
         }
-
-        h1 {
-            margin: 0;
-            font-size: clamp(38px, 6vw, 68px);
-            line-height: 1.08;
-            letter-spacing: -2.5px;
-            font-weight: 750;
-        }
-
-        h1 span {
-            color: var(--cream);
-        }
-
-        .hero-description {
-            max-width: 620px;
-            margin: 24px 0 0;
-            color: var(--muted);
-            font-size: 17px;
-        }
-
+        h1 { margin: 0; font-size: clamp(38px, 6vw, 68px); line-height: 1.08; letter-spacing: -2.5px; font-weight: 750; }
+        h1 span { color: var(--cream); }
+        .hero-description { max-width: 620px; margin: 24px 0 0; color: var(--muted); font-size: 17px; }
         .steps {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px 24px;
-            margin: 0 0 30px;
-            padding: 0;
-            list-style: none;
-            color: var(--muted);
-            font-size: 13px;
+            display: flex; flex-wrap: wrap; gap: 12px 24px; margin: 0 0 30px;
+            padding: 0; list-style: none; color: var(--muted); font-size: 13px;
         }
-
         .steps span {
-            display: inline-grid;
-            place-items: center;
-            width: 23px;
-            height: 23px;
-            margin-right: 7px;
-            border: 1px solid #ffffff20;
-            border-radius: 50%;
-            color: var(--cream);
-            font-size: 11px;
+            display: inline-grid; place-items: center; width: 23px; height: 23px; margin-right: 7px;
+            border: 1px solid #ffffff20; border-radius: 50%; color: var(--cream); font-size: 11px;
         }
-
-        .workspace {
-            padding: 30px;
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: 28px;
-        }
-
+        .workspace { padding: 30px; background: var(--surface); border: 1px solid var(--line); border-radius: 28px; }
         .section-heading {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 12px; margin-bottom: 20px;
         }
-
-        h2 {
-            margin: 0;
-            font-size: 21px;
-            letter-spacing: -.5px;
-        }
-
-        .counter {
-            color: var(--muted);
-            font-size: 13px;
-        }
-
+        h2 { margin: 0; font-size: 21px; letter-spacing: -.5px; }
+        .counter { color: var(--muted); font-size: 13px; }
         .dropzone {
-            position: relative;
-            display: flex;
-            min-height: 205px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 28px;
-            border: 1px dashed #a998c660;
-            border-radius: 20px;
-            background: #ffffff03;
-            text-align: center;
-            cursor: pointer;
-            transition: background .2s, border-color .2s;
+            position: relative; display: flex; min-height: 205px; flex-direction: column;
+            align-items: center; justify-content: center; padding: 28px;
+            border: 1px dashed #a998c660; border-radius: 20px; background: #ffffff03;
+            text-align: center; cursor: pointer; transition: background .2s, border-color .2s;
         }
-
-        .dropzone:hover,
-        .dropzone.dragover {
-            background: #c4b0f10b;
-            border-color: var(--accent);
-        }
-
-        .dropzone.is-disabled {
-            opacity: .5;
-            cursor: default;
-        }
-
-        .dropzone input {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            opacity: 0;
-        }
-
+        .dropzone:hover, .dropzone.dragover { background: #c4b0f10b; border-color: var(--accent); }
+        .dropzone.is-disabled { opacity: .5; cursor: default; }
+        .dropzone input { position: absolute; width: 1px; height: 1px; opacity: 0; }
         .upload-icon {
-            display: grid;
-            place-items: center;
-            width: 48px;
-            height: 48px;
-            margin-bottom: 14px;
-            border: 1px solid #ffffff15;
-            border-radius: 16px;
-            background: var(--surface-light);
-            color: var(--cream);
+            display: grid; place-items: center; width: 48px; height: 48px; margin-bottom: 14px;
+            border: 1px solid #ffffff15; border-radius: 16px; background: var(--surface-light); color: var(--cream);
         }
-
-        .drop-title {
-            font-size: 16px;
-            font-weight: 650;
-        }
-
-        .drop-title span {
-            color: var(--accent);
-        }
-
-        .drop-description {
-            margin-top: 7px;
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        #files-list {
-            display: grid;
-            gap: 10px;
-            margin: 16px 0 0;
-            padding: 0;
-            list-style: none;
-        }
-
+        .drop-title { font-size: 16px; font-weight: 650; }
+        .drop-title span { color: var(--accent); }
+        .drop-description { margin-top: 7px; color: var(--muted); font-size: 12px; }
+        #files-list { display: grid; gap: 10px; margin: 16px 0 0; padding: 0; list-style: none; }
         .file-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 14px;
-            background: #ffffff04;
-            border: 1px solid var(--line);
-            border-radius: 14px;
+            display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+            background: #ffffff04; border: 1px solid var(--line); border-radius: 14px;
         }
-
         .file-extension {
-            display: grid;
-            place-items: center;
-            flex-shrink: 0;
-            width: 44px;
-            height: 44px;
-            border-radius: 11px;
-            background: var(--surface-light);
-            color: var(--accent);
-            font-size: 10px;
-            font-weight: 750;
+            display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px;
+            border-radius: 11px; background: var(--surface-light); color: var(--accent); font-size: 10px; font-weight: 750;
         }
-
-        .file-details {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .file-name {
-            overflow-wrap: anywhere;
-            font-size: 14px;
-        }
-
-        .file-size {
-            color: var(--muted);
-            font-size: 12px;
-        }
-
+        .file-details { flex: 1; min-width: 0; }
+        .file-name { overflow-wrap: anywhere; font-size: 14px; }
+        .file-size { color: var(--muted); font-size: 12px; }
         .remove-file {
-            padding: 6px 10px;
-            border: 0;
-            border-radius: 8px;
-            background: transparent;
-            color: var(--muted);
-            font-size: 20px;
-            line-height: 1;
+            padding: 6px 10px; border: 0; border-radius: 8px; background: transparent;
+            color: var(--muted); font-size: 20px; line-height: 1;
         }
-
-        .remove-file:hover {
-            background: #ffb4b410;
-            color: var(--danger);
-        }
-
-        .files-actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 8px;
-        }
-
-        .text-button {
-            padding: 5px 0;
-            border: 0;
-            background: transparent;
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        .text-button:hover {
-            color: var(--text);
-        }
-
-        .divider {
-            height: 1px;
-            margin: 25px 0;
-            background: var(--line);
-        }
-
-        .mode-heading {
-            margin: 0 0 14px;
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .modes {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-        }
-
+        .remove-file:hover { background: #ffb4b410; color: var(--danger); }
+        .files-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
+        .text-button { padding: 5px 0; border: 0; background: transparent; color: var(--muted); font-size: 12px; }
+        .text-button:hover { color: var(--text); }
+        .divider { height: 1px; margin: 25px 0; background: var(--line); }
+        .mode-heading { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
+        .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         .mode-button {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-            min-height: 85px;
-            padding: 18px 20px;
-            border: 1px solid #ffffff20;
-            border-radius: 17px;
-            background: var(--surface-light);
-            color: var(--text);
-            text-align: left;
+            display: flex; align-items: center; justify-content: space-between; gap: 15px;
+            min-height: 85px; padding: 18px 20px; border: 1px solid #ffffff20; border-radius: 17px;
+            background: var(--surface-light); color: var(--text); text-align: left;
             transition: transform .15s, border-color .15s;
         }
-
-        .mode-button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            border-color: var(--accent);
-        }
-
-        .mode-button.paid {
-            border-color: var(--cream);
-            background: var(--cream);
-            color: #27203f;
-        }
-
-        .mode-name {
-            display: block;
-            font-size: 15px;
-            font-weight: 750;
-        }
-
-        .mode-description {
-            display: block;
-            margin-top: 3px;
-            font-size: 12px;
-            opacity: .65;
-        }
-
-        .arrow {
-            font-size: 24px;
-        }
-
-        .disclaimer {
-            margin: 17px 0 0;
-            color: var(--muted);
-            font-size: 12px;
-        }
-
+        .mode-button:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--accent); }
+        .mode-button.paid { border-color: var(--cream); background: var(--cream); color: #27203f; }
+        .mode-name { display: block; font-size: 15px; font-weight: 750; }
+        .mode-description { display: block; margin-top: 3px; font-size: 12px; opacity: .65; }
+        .arrow { font-size: 24px; }
+        .disclaimer { margin: 17px 0 0; color: var(--muted); font-size: 12px; }
         .status-panel {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 20px;
-            padding: 17px 20px;
-            border: 1px solid var(--line);
-            border-radius: 17px;
-            background: #ffffff03;
+            display: flex; align-items: center; gap: 12px; margin-top: 20px; padding: 17px 20px;
+            border: 1px solid var(--line); border-radius: 17px; background: #ffffff03;
         }
-
-        .status-dot {
-            flex-shrink: 0;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--muted);
-        }
-
+        .status-dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
         .status-panel.loading .status-dot {
-            width: 17px;
-            height: 17px;
-            border: 2px solid #c4b0f130;
-            border-top-color: var(--accent);
-            background: transparent;
-            animation: spin .8s linear infinite;
+            width: 17px; height: 17px; border: 2px solid #c4b0f130;
+            border-top-color: var(--accent); background: transparent; animation: spin .8s linear infinite;
         }
-
-        .status-panel.error .status-dot {
-            background: var(--danger);
-        }
-
-        .status-panel.success .status-dot {
-            background: #b8d9ad;
-        }
-
-        #output {
-            color: var(--muted);
-            font-size: 13px;
-            overflow-wrap: anywhere;
-        }
-
-        #results {
-            margin-top: 32px;
-        }
-
-        #results[hidden],
-        details[hidden] {
-            display: none;
-        }
-
-        .result-heading {
-            margin-bottom: 18px;
-        }
-
-        .result-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
+        .status-panel.error .status-dot { background: var(--danger); }
+        .status-panel.success .status-dot { background: #b8d9ad; }
+        #output { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+        #results { margin-top: 32px; }
+        #results[hidden], details[hidden] { display: none; }
+        .result-heading { margin-bottom: 18px; }
+        .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .result-card {
-            min-width: 0;
-            padding: 25px;
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: 22px;
+            min-width: 0; padding: 25px; background: var(--surface);
+            border: 1px solid var(--line); border-radius: 22px;
         }
-
-        .result-card.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .result-card h3 {
-            margin: 0 0 18px;
-            color: var(--cream);
-            font-size: 18px;
-        }
-
-        .result-card h4 {
-            margin: 20px 0 10px;
-            color: var(--accent);
-            font-size: 13px;
-        }
-
-        .result-card p {
-            margin: 0;
-            color: #d0c8dc;
-            font-size: 14px;
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
-        }
-
-        .condition {
-            margin-top: 17px;
-        }
-
-        .condition:first-of-type {
-            margin-top: 0;
-        }
-
-        .condition-label {
-            margin-bottom: 4px;
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        .checklist {
-            display: grid;
-            gap: 12px;
-        }
-
+        .result-card.full-width { grid-column: 1 / -1; }
+        .result-card h3 { margin: 0 0 18px; color: var(--cream); font-size: 18px; }
+        .result-card h4 { margin: 20px 0 10px; color: var(--accent); font-size: 13px; }
+        .result-card p { margin: 0; color: #d0c8dc; font-size: 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
+        .condition { margin-top: 17px; }
+        .condition:first-of-type { margin-top: 0; }
+        .condition-label { margin-bottom: 4px; color: var(--muted); font-size: 12px; }
+        .checklist { display: grid; gap: 12px; }
         .check-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            color: #d0c8dc;
-            font-size: 14px;
-            overflow-wrap: anywhere;
-            cursor: pointer;
+            display: flex; align-items: flex-start; gap: 10px;
+            color: #d0c8dc; font-size: 14px; overflow-wrap: anywhere; cursor: pointer;
         }
-
-        .check-item input {
-            flex-shrink: 0;
-            width: 17px;
-            height: 17px;
-            margin: 4px 0 0;
-            accent-color: var(--accent);
-        }
-
-        .check-item input:checked + span {
-            color: var(--muted);
-            text-decoration: line-through;
-        }
-
-        .conflict-card {
-            border-color: #d8ab6b50;
-        }
-
-        .conflict-card ul {
-            margin: 0;
-            padding-left: 20px;
-            color: #e8d4b5;
-            font-size: 14px;
-        }
-
-        .conflict-card li + li {
-            margin-top: 10px;
-        }
-
-        details {
-            margin-top: 18px;
-            border: 1px solid var(--line);
-            border-radius: 16px;
-            overflow: hidden;
-        }
-
-        summary {
-            padding: 15px 20px;
-            color: var(--muted);
-            font-size: 13px;
-            cursor: pointer;
-        }
-
+        .check-item input { flex-shrink: 0; width: 17px; height: 17px; margin: 4px 0 0; accent-color: var(--accent); }
+        .check-item input:checked + span { color: var(--muted); text-decoration: line-through; }
+        .conflict-card { border-color: #d8ab6b50; }
+        .conflict-card ul { margin: 0; padding-left: 20px; color: #e8d4b5; font-size: 14px; }
+        .conflict-card li + li { margin-top: 10px; }
+        details { margin-top: 18px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+        summary { padding: 15px 20px; color: var(--muted); font-size: 13px; cursor: pointer; }
         pre {
-            max-height: 500px;
-            overflow: auto;
-            margin: 0;
-            padding: 20px;
-            border-top: 1px solid var(--line);
-            background: #00000018;
-            color: #d0c8dc;
-            font-size: 12px;
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
+            max-height: 500px; overflow: auto; margin: 0; padding: 20px;
+            border-top: 1px solid var(--line); background: #00000018; color: #d0c8dc;
+            font-size: 12px; white-space: pre-wrap; overflow-wrap: anywhere;
         }
-
         footer {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-            padding: 30px 0;
-            color: var(--muted);
-            font-size: 12px;
+            display: flex; justify-content: space-between; flex-wrap: wrap;
+            gap: 10px; padding: 30px 0; color: var(--muted); font-size: 12px;
         }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
+        @keyframes spin { to { transform: rotate(360deg); } }
         @media (max-width: 640px) {
-            .container {
-                width: calc(100% - 28px);
-            }
-
-            header {
-                padding: 20px 0;
-            }
-
-            .header-note {
-                display: none;
-            }
-
-            .hero {
-                padding: 30px 0;
-            }
-
-            h1 {
-                letter-spacing: -1.5px;
-            }
-
-            .hero-description {
-                font-size: 15px;
-            }
-
-            .workspace {
-                padding: 20px;
-                border-radius: 22px;
-            }
-
-            .dropzone {
-                padding: 22px 15px;
-            }
-
-            .modes,
-            .result-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .result-card {
-                padding: 20px;
-            }
+            .container { width: calc(100% - 28px); }
+            header { padding: 20px 0; }
+            .header-note { display: none; }
+            .hero { padding: 30px 0; }
+            h1 { letter-spacing: -1.5px; }
+            .hero-description { font-size: 15px; }
+            .workspace { padding: 20px; border-radius: 22px; }
+            .dropzone { padding: 22px 15px; }
+            .modes, .result-grid { grid-template-columns: 1fr; }
+            .result-card { padding: 20px; }
         }
-
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: .01ms !important;
-                transition: none !important;
-            }
+            *, *::before, *::after { animation-duration: .01ms !important; transition: none !important; }
         }
     </style>
 </head>
-
 <body>
     <div class="container">
         <header>
@@ -652,21 +182,13 @@
                 <div class="brand-mark" aria-hidden="true">Я!</div>
                 <div class="brand-name">Ясно!</div>
             </div>
-
-            <div class="header-note">
-                Помощник по положениям конкурсов
-            </div>
+            <div class="header-note">Помощник по положениям конкурсов</div>
         </header>
 
         <main>
             <section class="hero">
                 <p class="eyebrow">Меньше путаницы. Больше ясности.</p>
-
-                <h1>
-                    Из положения —<br>
-                    <span>в план действий.</span>
-                </h1>
-
+                <h1>Из положения —<br><span>в план действий.</span></h1>
                 <p class="hero-description">
                     Добавь документы конкурса. Ясно! соберёт условия участия,
                     подготовит чек-лист и выделит противоречия.
@@ -682,34 +204,18 @@
             <form id="form" class="workspace">
                 <div class="section-heading">
                     <h2>Документы конкурса</h2>
-                    <span id="files-info" class="counter" role="status">
-                        Пока нет файлов
-                    </span>
+                    <span id="files-info" class="counter" role="status">Пока нет файлов</span>
                 </div>
-
                 <label class="dropzone" id="dropzone" for="files">
                     <input id="files" type="file" multiple>
-
                     <span class="upload-icon" aria-hidden="true">
-                        <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.6"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 16V4m-4 4 4-4 4 4"></path>
                             <path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"></path>
                         </svg>
                     </span>
-
-                    <span class="drop-title">
-                        Перетащи файлы или <span>выбери их</span>
-                    </span>
-
+                    <span class="drop-title">Перетащи файлы или <span>выбери их</span></span>
                     <span class="drop-description">
                         Можно добавлять по очереди — предыдущие останутся.
                         Доступность формата зависит от режима анализа.
@@ -717,52 +223,27 @@
                 </label>
 
                 <ul id="files-list" aria-label="Прикреплённые файлы"></ul>
-
                 <div class="files-actions">
-                    <button
-                        id="clear-files"
-                        type="button"
-                        class="text-button"
-                        disabled
-                    >
-                        Удалить все
-                    </button>
+                    <button id="clear-files" type="button" class="text-button" disabled>Удалить все</button>
                 </div>
-
                 <div class="divider"></div>
-
                 <p class="mode-heading">Как проанализировать?</p>
-
                 <div class="modes">
-                    <button
-                        class="mode-button"
-                        type="submit"
-                        value="free"
-                    >
+                    <button class="mode-button" type="submit" value="free">
                         <span>
                             <span class="mode-name">Бесплатный анализ</span>
-                            <span class="mode-description">
-                                Отправить документы в Gemini
-                            </span>
+                            <span class="mode-description">Отправить документы в Gemini</span>
                         </span>
                         <span class="arrow" aria-hidden="true">→</span>
                     </button>
-
-                    <button
-                        class="mode-button paid"
-                        type="submit"
-                        value="paid"
-                    >
+                    <button class="mode-button paid" type="submit" value="paid">
                         <span>
                             <span class="mode-name">Платный анализ</span>
-                            <span class="mode-description">
-                                Извлечь текст и отправить модели
-                            </span>
+                            <span class="mode-description">Извлечь текст и отправить модели</span>
                         </span>
                         <span class="arrow" aria-hidden="true">→</span>
                     </button>
                 </div>
-
                 <p class="disclaimer">
                     Не загружай конфиденциальные данные. Ответ ИИ нужно
                     сверять с исходными документами.
@@ -771,22 +252,15 @@
 
             <div id="status-panel" class="status-panel">
                 <span class="status-dot" aria-hidden="true"></span>
-                <div id="output" role="status" aria-live="polite">
-                    Добавь документы, чтобы начать.
-                </div>
+                <div id="output" role="status" aria-live="polite">Добавь документы, чтобы начать.</div>
             </div>
-
             <section id="results" hidden aria-label="Результат анализа">
                 <div class="section-heading result-heading">
                     <h2>Теперь яснее</h2>
-                    <span class="counter">
-                        Проверь требования по оригиналу
-                    </span>
+                    <span class="counter">Проверь требования по оригиналу</span>
                 </div>
-
                 <div id="result-content" class="result-grid"></div>
             </section>
-
             <details id="raw-details" hidden>
                 <summary>Исходный ответ сервера</summary>
                 <pre id="raw-output"></pre>
@@ -806,9 +280,7 @@
         const filesInfo = document.getElementById("files-info");
         const filesList = document.getElementById("files-list");
         const clearButton = document.getElementById("clear-files");
-        const submitButtons =
-            form.querySelectorAll('button[type="submit"]');
-
+        const submitButtons = form.querySelectorAll('button[type="submit"]');
         const output = document.getElementById("output");
         const statusPanel = document.getElementById("status-panel");
         const results = document.getElementById("results");
@@ -816,58 +288,44 @@
         const rawDetails = document.getElementById("raw-details");
         const rawOutput = document.getElementById("raw-output");
 
-        const baseUrl =
-            "https://yasno-production-1945b59d.up.railway.app";
-
+        const baseUrl = "https://yasno.up.railway.app";
         const endpoints = {
             free: "/free_multiple_files_upload",
             paid: "/paid_multiple_files_upload"
         };
-
         let selectedFiles = [];
         let sending = false;
 
         function setStatus(text, state = "") {
             output.textContent = text;
-            statusPanel.className =
-                `status-panel${state ? " " + state : ""}`;
+            statusPanel.className = `status-panel${state ? " " + state : ""}`;
         }
 
         function formatSize(bytes) {
             if (bytes < 1024) return `${bytes} Б`;
-            if (bytes < 1024 * 1024) {
-                return `${(bytes / 1024).toFixed(1)} КБ`;
-            }
+            if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} КБ`;
             return `${(bytes / (1024 * 1024)).toFixed(1)} МБ`;
         }
 
         function renderFiles() {
             filesInfo.textContent = selectedFiles.length
-                ? `Прикреплено: ${selectedFiles.length}`
-                : "Пока нет файлов";
-
+                ? `Прикреплено: ${selectedFiles.length}` : "Пока нет файлов";
             filesList.replaceChildren();
 
             selectedFiles.forEach((file, index) => {
                 const item = document.createElement("li");
                 item.className = "file-item";
-
                 const extension = document.createElement("span");
                 extension.className = "file-extension";
-
                 const dotPosition = file.name.lastIndexOf(".");
                 extension.textContent = dotPosition > 0
-                    ? file.name.slice(dotPosition + 1)
-                        .slice(0, 5).toUpperCase()
-                    : "ФАЙЛ";
+                    ? file.name.slice(dotPosition + 1).slice(0, 5).toUpperCase() : "ФАЙЛ";
 
                 const details = document.createElement("div");
                 details.className = "file-details";
-
                 const name = document.createElement("div");
                 name.className = "file-name";
                 name.textContent = file.name;
-
                 const size = document.createElement("div");
                 size.className = "file-size";
                 size.textContent = formatSize(file.size);
@@ -877,11 +335,7 @@
                 removeButton.className = "remove-file";
                 removeButton.textContent = "×";
                 removeButton.disabled = sending;
-                removeButton.setAttribute(
-                    "aria-label",
-                    `Удалить файл ${file.name}`
-                );
-
+                removeButton.setAttribute("aria-label", `Удалить файл ${file.name}`);
                 removeButton.addEventListener("click", () => {
                     if (sending) return;
                     selectedFiles.splice(index, 1);
@@ -892,25 +346,19 @@
                 item.append(extension, details, removeButton);
                 filesList.appendChild(item);
             });
-
             clearButton.disabled = sending || !selectedFiles.length;
         }
 
         function addFiles(files) {
             if (sending) return;
-
             for (const file of files) {
                 const alreadyAdded = selectedFiles.some((existing) =>
                     existing.name === file.name &&
                     existing.size === file.size &&
                     existing.lastModified === file.lastModified
                 );
-
-                if (!alreadyAdded) {
-                    selectedFiles.push(file);
-                }
+                if (!alreadyAdded) selectedFiles.push(file);
             }
-
             renderFiles();
         }
 
@@ -919,30 +367,22 @@
             filesInput.disabled = value;
             form.setAttribute("aria-busy", String(value));
             dropzone.classList.toggle("is-disabled", value);
-
-            submitButtons.forEach((button) => {
-                button.disabled = value;
-            });
-
+            submitButtons.forEach((button) => { button.disabled = value; });
             renderFiles();
         }
 
         function toText(value) {
             if (typeof value === "string") return value;
-            if (value === null || value === undefined) {
-                return "В документе не указано";
-            }
+            if (value === null || value === undefined) return "В документе не указано";
             return JSON.stringify(value, null, 2);
         }
 
         function createCard(title, extraClass = "") {
             const card = document.createElement("article");
             card.className = `result-card ${extraClass}`.trim();
-
             const heading = document.createElement("h3");
             heading.textContent = title;
             card.appendChild(heading);
-
             resultContent.appendChild(card);
             return card;
         }
@@ -957,124 +397,75 @@
             const heading = document.createElement("h4");
             heading.textContent = title;
             parent.appendChild(heading);
-
             if (!Array.isArray(items) || !items.length) {
                 addParagraph(parent, "В документе не указано");
                 return;
             }
-
             const list = document.createElement("div");
             list.className = "checklist";
-
             for (const item of items) {
                 const label = document.createElement("label");
                 label.className = "check-item";
-
                 const checkbox = document.createElement("input");
                 checkbox.type = "checkbox";
-
                 const text = document.createElement("span");
-                text.textContent = toText(item)
-                    .replace(/^\s*\[\s*\]\s*/, "");
-
+                text.textContent = toText(item).replace(/^\s*\[\s*\]\s*/, "");
                 label.append(checkbox, text);
                 list.appendChild(label);
             }
-
             parent.appendChild(list);
         }
 
         function renderResult(data) {
             resultContent.replaceChildren();
-
-            const isStructured = data &&
-                typeof data === "object" &&
-                !Array.isArray(data) &&
-                (
-                    "conditions" in data ||
-                    "checklist" in data ||
-                    "conflicts" in data ||
-                    "conclusion" in data
-                );
-
+            const isStructured = data && typeof data === "object" && !Array.isArray(data) && (
+                "conditions" in data || "checklist" in data ||
+                "conflicts" in data || "conclusion" in data
+            );
             if (!isStructured) {
-                const card = createCard(
-                    "Результат анализа",
-                    "full-width"
-                );
+                const card = createCard("Результат анализа", "full-width");
                 addParagraph(card, data);
                 results.hidden = false;
                 return;
             }
-
             if (data.conditions) {
                 const card = createCard("01 / Условия участия");
-
                 const labels = {
                     participants: "Кто может участвовать",
                     restrictions: "Ограничения",
                     deadlines: "Сроки",
                     submission: "Подача заявки"
                 };
-
                 for (const [key, title] of Object.entries(labels)) {
                     const block = document.createElement("div");
                     block.className = "condition";
-
                     const label = document.createElement("div");
                     label.className = "condition-label";
                     label.textContent = title;
-
                     block.appendChild(label);
                     addParagraph(block, data.conditions[key]);
                     card.appendChild(block);
                 }
             }
-
             if (data.checklist) {
                 const card = createCard("02 / Чек-лист подготовки");
-
-                addChecklist(
-                    card,
-                    "Обязательно",
-                    data.checklist.required
-                );
-
-                addChecklist(
-                    card,
-                    "Рекомендуется",
-                    data.checklist.recommended
-                );
+                addChecklist(card, "Обязательно", data.checklist.required);
+                addChecklist(card, "Рекомендуется", data.checklist.recommended);
             }
-
-            if (
-                Array.isArray(data.conflicts) &&
-                data.conflicts.length
-            ) {
-                const card = createCard(
-                    "Обнаружены противоречия",
-                    "full-width conflict-card"
-                );
-
+            if (Array.isArray(data.conflicts) && data.conflicts.length) {
+                const card = createCard("Обнаружены противоречия", "full-width conflict-card");
                 const list = document.createElement("ul");
-
                 for (const conflict of data.conflicts) {
                     const item = document.createElement("li");
                     item.textContent = toText(conflict);
                     list.appendChild(item);
                 }
-
                 card.appendChild(list);
             }
-
             if ("conclusion" in data) {
-                const card = createCard(
-                    "03 / На что обратить внимание",
-                    "full-width"
-                );
+                const card = createCard("03 / На что обратить внимание", "full-width");
                 addParagraph(card, data.conclusion);
             }
-
             results.hidden = false;
         }
 
@@ -1082,27 +473,18 @@
             addFiles(filesInput.files);
             filesInput.value = "";
         });
-
         dropzone.addEventListener("dragover", (event) => {
             event.preventDefault();
-            if (!sending) {
-                dropzone.classList.add("dragover");
-            }
+            if (!sending) dropzone.classList.add("dragover");
         });
-
         dropzone.addEventListener("dragleave", () => {
             dropzone.classList.remove("dragover");
         });
-
         dropzone.addEventListener("drop", (event) => {
             event.preventDefault();
             dropzone.classList.remove("dragover");
-
-            if (!sending && event.dataTransfer) {
-                addFiles(event.dataTransfer.files);
-            }
+            if (!sending && event.dataTransfer) addFiles(event.dataTransfer.files);
         });
-
         clearButton.addEventListener("click", () => {
             if (sending) return;
             selectedFiles = [];
@@ -1112,127 +494,70 @@
 
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
-
             if (sending) return;
-
             if (!selectedFiles.length) {
-                setStatus(
-                    "Сначала добавь хотя бы один документ.",
-                    "error"
-                );
+                setStatus("Сначала добавь хотя бы один документ.", "error");
                 return;
             }
-
             const mode = event.submitter?.value || "free";
-            const modeLabel = mode === "paid"
-                ? "Платный анализ"
-                : "Бесплатный анализ";
-
+            const modeLabel = mode === "paid" ? "Платный анализ" : "Бесплатный анализ";
             const data = new FormData();
-
-            for (const file of selectedFiles) {
-                data.append("uploaded_files", file);
-            }
+            for (const file of selectedFiles) data.append("uploaded_files", file);
 
             results.hidden = true;
             resultContent.replaceChildren();
             rawDetails.hidden = true;
             rawDetails.open = false;
             rawOutput.textContent = "";
-
             setSending(true);
 
             const started = Date.now();
-
-            setStatus(
-                `${modeLabel}: отправляем документы…`,
-                "loading"
-            );
-
+            setStatus(`${modeLabel}: отправляем документы…`, "loading");
             const timer = setInterval(() => {
-                const seconds = Math.floor(
-                    (Date.now() - started) / 1000
-                );
-
-                setStatus(
-                    `${modeLabel}: ожидаем ответ — ${seconds} сек.`,
-                    "loading"
-                );
+                const seconds = Math.floor((Date.now() - started) / 1000);
+                setStatus(`${modeLabel}: ожидаем ответ — ${seconds} сек.`, "loading");
             }, 1000);
 
             try {
-                const response = await fetch(
-                    baseUrl + endpoints[mode],
-                    {
-                        method: "POST",
-                        body: data
-                    }
-                );
-
+                const response = await fetch(baseUrl + endpoints[mode], {
+                    method: "POST",
+                    body: data
+                });
                 const text = await response.text();
                 clearInterval(timer);
 
                 let parsed;
                 let isJson = false;
-
                 try {
                     parsed = JSON.parse(text);
                     isJson = true;
                 } catch {
                     parsed = null;
                 }
-
                 rawOutput.textContent = isJson
-                    ? JSON.stringify(parsed, null, 2)
-                    : text || "[Пустой ответ сервера]";
-
+                    ? JSON.stringify(parsed, null, 2) : text || "[Пустой ответ сервера]";
                 rawDetails.hidden = false;
 
                 if (!response.ok) {
-                    const detail =
-                        parsed && typeof parsed === "object"
-                            ? parsed.detail ?? parsed.message ?? text
-                            : text;
-
-                    throw new Error(
-                        `HTTP ${response.status}: ` +
-                        toText(detail || "Ошибка сервера")
-                    );
+                    const detail = parsed && typeof parsed === "object"
+                        ? parsed.detail ?? parsed.message ?? text : text;
+                    throw new Error(`HTTP ${response.status}: ` + toText(detail || "Ошибка сервера"));
                 }
-
-                if (!text) {
-                    throw new Error("Сервер вернул пустой ответ.");
-                }
+                if (!text) throw new Error("Сервер вернул пустой ответ.");
 
                 if (isJson) {
                     renderResult(parsed);
                 } else {
                     resultContent.replaceChildren();
-                    const card = createCard(
-                        "Ответ сервера",
-                        "full-width"
-                    );
+                    const card = createCard("Ответ сервера", "full-width");
                     addParagraph(card, text);
                     results.hidden = false;
                 }
-
-                const seconds = Math.floor(
-                    (Date.now() - started) / 1000
-                );
-
-                setStatus(
-                    `Готово за ${seconds} сек. ` +
-                    "Разбор документов — ниже.",
-                    "success"
-                );
+                const seconds = Math.floor((Date.now() - started) / 1000);
+                setStatus(`Готово за ${seconds} сек. Разбор документов — ниже.`, "success");
             } catch (error) {
                 clearInterval(timer);
-                setStatus(
-                    error instanceof Error
-                        ? error.message
-                        : String(error),
-                    "error"
-                );
+                setStatus(error instanceof Error ? error.message : String(error), "error");
             } finally {
                 clearInterval(timer);
                 setSending(false);
